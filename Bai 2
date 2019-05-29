@@ -1,0 +1,29 @@
+// Bai 2
+#include <stdio.h>
+#include <conio.h>
+#include <math.h>
+
+int SNT(int n);
+int SNT(int n){
+	if(n<=1){
+		return 0;
+	}
+	for(int i=2;i<=sqrt(n);i++){
+		if(n%i==0){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int main(){
+	int n;
+	printf("Nhap n: ");
+	scanf("%d", &n);
+	if(SNT(n)==0)
+	printf("Day khong phai so nguyen to.");
+	else if(SNT(n) == 1)
+	printf("Day la so nguyen to");
+	getch();
+	return 0;
+}
