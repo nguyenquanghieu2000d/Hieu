@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+
+typedef struct nhanvien{
+	char manv[5];
+	char hoTen[50];
+	int ngay;
+	int thang;
+	int nam;
+	char queQuan[50];
+	int luong;
+}nv;
+int nhapN(int min, int max);
+void nhapMang(nv *a, int n);
+void xuatMang(nv *a, int n);
+void luong300000(nv *a, int n);
+int timThangSinh(nv *a, int n, int thang){
+	int count = 0;
+	for(int i=0;i<n;i++){
+		if(a[i].thang == thang)
+		count++;
+	}
+	return count;
+}
+
+int nhapN(int min, int max){  
+	int n;
+	do{
+		scanf("%d", &n);
+		if(n>max||n<=min){
+			printf("Nhap lai: ");
+		}
+	}while(n>max||n<=min);
+}
+
+void nhapMang(nv *a, int n){
+	printf("Nhap danh sach nhan vien\n");
+	for(int i=0;i<n;i++){
+		printf("\nNhap thong tin nhan vien thu %d\n", i);
+		printf("Ma nhan vien: ");
+		fflush(stdin);
+		gets(a[i].manv);
+		printf("Ten nhan vien: ");
+		fflush(stdin);
+		gets(a[i].hoTen);
+		printf("Ngay sinh: ");
+		scanf("%d", &a[i].ngay);
+		printf("Thang sinh: ");
+		scanf("%d", &a[i].thang);
+		printf("Nam sinh: ");
+		scanf("%d", &a[i].nam);
+		printf("Que Quan: ");
+		fflush(stdin);
+		gets(a[i].queQuan);
+		printf("Luong: ");
+		scanf("%d", &a[i].luong);
+	}
+}
+
+void xuatMang(nv *a, int n){
+	for(int i=0;i<n;i++){
+		printf("\nThong tin nhan vien thu %d\n", i);
+		printf("\nMa nhan vien: %s",a[i].manv);
+		printf("\nTen nhan vien: %s",a[i].hoTen);
+		printf("\nNgay thang nam sinh: %d / %d / %d",a[i].ngay,a[i].thang, a[i].nam);
+		printf("\nQue Quan: %s",a[i].queQuan);
+		printf("\nLuong: %d", a[i].luong);
+	}	
+}
+
+void luong300000(nv *a, int n){
+	char k[10] = "Ha Noi";
+	printf("\nDanh sach nhan vien co muc luong duoi 300000 va o Ha Noi.\n");
+	for(int i=0;i<n;i++){
+		if(a[i].luong<300000 && strcmp(a[i].queQuan, k) == 0){
+			printf("\nThong tin sinh vien thu %d\n", i);
+			printf("\nMa nhan vien: %s",a[i].manv);
+			printf("\nTen nhan vien: %s",a[i].hoTen);
+			printf("\nNgay thang nam sinh: %d / %d / %d",a[i].ngay,a[i].thang, a[i].nam);
+			printf("\nQue Quan: %s",a[i].queQuan);
+			printf("\nLuong: %d", a[i].luong);
+		}
+	}		
+}
+
+int main(){
+	nv a[100];
+	printf("Nhap so nhan vien:");
+	int n;
+	n= nhapN(0,10);
+	nhapMang(a,n);
+	xuatMang(a,n);
+	luong300000(a,n);
+	int thang;
+	printf("\nNhap 1 thang sinh bat ky: ");
+	do{
+		scanf("%d", &thang);
+	}while(thang>12 || thang <=0);
+	printf("So nguoi sinh thang %d la: %d",thang, timThangSinh(a,n,thang));
+	getch();
+	return 0;
+}
