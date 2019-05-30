@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <conio.h>
+
+int nhapNM(int min, int max); 
+void nhapMang(int a[100][100], int m, int n);
+void xuatMang(int a[100][100], int m, int n);
+int maxDong2(int a[100][100], int m, int n);
+int ghiFile(int a[100][100], int m, int n, char *filePath);
+
+int nhapNM(int min, int max){  
+	int n;
+	do{
+		scanf("%d", &n);
+		if(n>max||n<=min){
+			printf("Nhap lai: ");
+		}
+	}while(n>max||n<=min);
+}
+
+void nhapMang(int a[100][100], int m, int n){
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			printf("Nhap a[%d][%d] = ", i, j);
+			scanf("%d", &a[i][j]);
+		}
+	}	
+}
+
+void xuatMang(int a[100][100], int m, int n){
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			printf("%5d", a[i][j]);
+		}
+		printf("\n\n");
+	}	
+}
+
+int maxDong2(int a[100][100], int m, int n){
+	int max = a[1][0];
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			if(max < a[1][j])
+			max = a[1][j];
+		}
+	}
+	return max;	
+}
+
+int ghiFile(int a[100][100], int m, int n, char *filePath){
+	FILE *fp = NULL;
+	fp = fopen(filePath, "wt");
+	if(fp == NULL){
+		printf("Khong mo duoc");
+		return -1;
+	}
+	else{
+		for(int i=0;i<n;i++){
+			for(int j=0;j<m;j++){
+				fprintf(fp,"%5d", a[i][j]);
+			}
+		fprintf(fp,"\n\n");
+	}	
+	fprintf(fp,"\nMax cua dong 2 cua mang la: %d", maxDong2(a,m,n));
+		fclose(fp);
+		fp = NULL;
+	}
+}
+
+int main(){
+	// Khai bao
+	int a[100][100];
+	int n,m;
+	// Goi ham
+	printf("Nhap so hang: ");
+	n=nhapNM(0,10);
+	printf("Nhap so cot: ");
+	m=nhapNM(0,10);
+	nhapMang(a,m,n);
+	printf("\nMang vua nhap la: \n\n");
+	xuatMang(a,m,n);
+	int max2 = maxDong2(a,m,n);
+	printf("\nMax cua dong 2 cua mang la: %d", max2);
+	char *filePath="D:\\Hung.txt";
+	ghiFile(a,m,n,filePath);
+	getch();
+	return 0;
+}
