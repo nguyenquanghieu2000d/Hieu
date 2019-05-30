@@ -159,7 +159,7 @@ int main(){
 	int k;
 	printf("Nhap phan tu k: ");
 	scanf("%d", &k);
-	chenGiaTri(a, n, k, x);
+	chenGiaTri(a, n, k, x1);
 	
 	//////////////////////////////////////////
 	//Ket thuc
