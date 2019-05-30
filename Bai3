@@ -15,6 +15,7 @@ int nhapN(int min, int max);
 void nhapMang(nv *a, int n);
 void xuatMang(nv *a, int n);
 void luong300000(nv *a, int n);
+
 int timThangSinh(nv *a, int n, int thang){
 	int count = 0;
 	for(int i=0;i<n;i++){
@@ -37,7 +38,7 @@ int nhapN(int min, int max){
 void nhapMang(nv *a, int n){
 	printf("Nhap danh sach nhan vien\n");
 	for(int i=0;i<n;i++){
-		printf("\nNhap thong tin nhan vien thu %d\n", i);
+		printf("\nNhap thong tin nhan vien thu %d\n", i+1);
 		printf("Ma nhan vien: ");
 		fflush(stdin);
 		gets(a[i].manv);
@@ -60,7 +61,7 @@ void nhapMang(nv *a, int n){
 
 void xuatMang(nv *a, int n){
 	for(int i=0;i<n;i++){
-		printf("\nThong tin nhan vien thu %d\n", i);
+		printf("\nThong tin nhan vien thu %d\n", i+1);
 		printf("\nMa nhan vien: %s",a[i].manv);
 		printf("\nTen nhan vien: %s",a[i].hoTen);
 		printf("\nNgay thang nam sinh: %d / %d / %d",a[i].ngay,a[i].thang, a[i].nam);
@@ -74,7 +75,7 @@ void luong300000(nv *a, int n){
 	printf("\nDanh sach nhan vien co muc luong duoi 300000 va o Ha Noi.\n");
 	for(int i=0;i<n;i++){
 		if(a[i].luong<300000 && strcmp(a[i].queQuan, k) == 0){
-			printf("\nThong tin sinh vien thu %d\n", i);
+			printf("\nThong tin sinh vien thu %d\n", i+1);
 			printf("\nMa nhan vien: %s",a[i].manv);
 			printf("\nTen nhan vien: %s",a[i].hoTen);
 			printf("\nNgay thang nam sinh: %d / %d / %d",a[i].ngay,a[i].thang, a[i].nam);
