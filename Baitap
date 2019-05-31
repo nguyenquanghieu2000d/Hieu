@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <conio.h>
+#include <math.h>
+
+int nhapN(int nMin, int nMax); // Ham nhap vao n
+void nhapMang(int *a, int n); // Ham nhap vao mang
+void xuatMang(int *a, int n); // Ham in ra mang len man hinh
+int timSoAmLonNhat(int *a, int n); // Tim so am lon nhat trong mang
+
+int nhapN(int nMin, int nMax){  
+	printf("Nhap n: ");
+	int n;
+	do{
+		scanf("%d", &n);
+		if(n>nMax||n<=nMin){
+			printf("Nhap lai: ");
+		}
+	}while(n>nMax||n<=nMin);
+}
+
+void nhapMang(int *a, int n){
+	for(int i=0;i<n;i++){
+		printf("Nhap a[%d] = ", i);
+		scanf("%d", &a[i]);
+	}
+}
+
+void xuatMang(int *a, int n){
+	for(int i=0;i<n;i++){
+		printf("%5d", a[i]);
+		
+	}
+}
+
+int timSoAmLonNhat(int *a, int n){
+		int m;
+		int count = 0;
+		for(int i=0;i<n;i++){
+			if(a[i]<0){
+			m = a[i];
+			count++;	
+			}	
+		}
+		if(count == 0){
+			return 0;
+		}
+		else{
+			for(int i=0;i<n;i++){
+				if(a[i]<0 && a[i]>m){
+					m = a[i];
+				}
+			}
+			return m;	
+		}
+}
+
+int main(){
+	// Khoi tao va khai bao
+	int a[100];
+	int n;
+	// Goi ham 
+	
+	// Nhap mang va xuat mang//////////////
+	n=nhapN(0,100);
+	nhapMang(a,n);
+	printf("Mang vua nhap la: \n");
+	xuatMang(a,n);
+	////////////////////////////////////////
+	
+	
+	// Tim so am lon nhat////////////////////////
+	if(timSoAmLonNhat(a,n) == 0){
+		printf("\nMang khong co so am.");
+	}
+	else{
+		printf("\nSo am lon nhat co trong mang la: %d",timSoAmLonNhat(a,n));
+	}
+	////////////////////////////////////////
+	getch();
+	return 0;
+}
