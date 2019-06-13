@@ -1,0 +1,129 @@
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+
+struct TienDien{
+	char mahogd[20];
+	char tenhogd[20];
+	char diachi[20];
+	int sodien;
+	float tiendien;
+};
+void nhap(TienDien a[], int n)
+{
+	printf("Nhap thong tin cac ho gia dinh : \n");
+	for(int i=0;i<n;i++)
+	{
+		printf("------------------\n");
+		printf("\nNhap ma ho gia dinh %d: ", i+1); fflush(stdin); gets(a[i].mahogd);
+		printf("\nNhap ten ho gia dinh %d: ", i+1); fflush(stdin); gets(a[i].tenhogd);
+		printf("\nNhap dia chi ho gia dinh %d: ", i+1); fflush(stdin); gets(a[i].diachi);
+		printf("\nNhap so dien tieu thu %d: ", i+1); scanf("%d", &(a[i].sodien));
+	}
+}
+void xuat(TienDien a[], int n)
+{
+	for(int i=0;i<n;i++)
+	{
+		printf("\n%s     %s    %s    %d   %.1fVND", a[i].mahogd, a[i].tenhogd, a[i].diachi, a[i].sodien, a[i].tiendien);
+	}
+}
+int tongtiendien(TienDien a[], int n)
+{
+	for(int i=0;i<n;i++){
+		if(a[i].sodien <= 100){
+		   a[i].tiendien = a[i].sodien*500;}
+		else if(a[i].sodien > 100 && a[i].sodien<=200){
+		    a[i].tiendien = 100*500 + (a[i].sodien - 100)*1000;
+		}
+		else if(a[i].sodien > 200){
+			a[i].tiendien = 100*500 + 100*1000 + (a[i].sodien - 200)*2000;
+		}
+		printf("\n------------------------");
+		printf("\nTong tien dien cua ho %d la: %.1fVND \n", i+1, a[i].tiendien);
+	}
+}
+// danh sach ho tieu thu nhieu so dien
+void gdhomaxsodien(TienDien a[], int n)
+{
+	for(int i=0;i<n;i++)
+	{
+		int max = a[0].sodien;
+		if(a[i].sodien > max)
+		{
+			max = a[i].sodien;
+			printf("\n---------------------");
+			printf("\nHo gia dinh tieu thu nhieu dien nhat la : %s %s %d %.1fVND", a[i].mahogd, a[i].tenhogd, max, a[i].tiendien);
+		}
+	}
+}
+// danh sach it so dien
+void gdhominsodien(TienDien a[], int n)
+{
+	for(int i=0;i<n;i++)
+	{
+		int min = a[0].sodien;
+		if(a[i].sodien < min)
+		{
+			min = a[i].sodien;
+			printf("\nHo gia dinh tieu thu it dien nhat la : %s %s %d   %.1fVND", a[i].mahogd, a[i].tenhogd, min, a[i].tiendien);
+		}
+	}
+}
+//nhap vao ho ten cua 1 ho bat ky tu ban phim in ra so tien dien ma ho phai tra
+void timtenhogd(TienDien a[], int n , char ten[])
+{
+	for(int i=0;i<n;i++)
+	{
+		if( strcmp(a[i].tenhogd,ten) == 0 )
+		{
+			printf("\nSo tien ho gia dinh phai tra la: %1.fVND", a[i].tiendien);
+		}	
+	}	
+}
+void nhaptenhogd(TienDien a[], int n, char ten[])
+{
+	char ten123[30];
+	printf("\nNhap ten ho gd can tim : ");
+	fflush(stdin);
+	gets(ten123);
+	for(int i=0;i<n;i++)
+	{
+			
+			if(strcmp(a[i].tenhogd,ten123) == 0){
+				printf("Tien dien cua ho gia dinh nay nay la: %f", a[i].tiendien);
+			}
+	}
+}
+// tinh tong so tien cua n ho va tbinh moi gd dung het bn tien dien
+int tongtien(TienDien a[], int n)
+{
+	float tong = 0;
+	float trungbinh;
+	for(int i=0;i<n;i++)
+	{
+		tong += a[i].tiendien;
+	}
+	printf("\nTong tien dien tat ca cac ho la : %.1f", tong);
+	trungbinh = (float)tong/n;
+	printf("\nTrung binh moi ho gia dinh dung het tat ca la : %.1f", trungbinh);
+}
+int main()
+{
+	int n;
+	TienDien a[50];
+	printf("Nhap so luong ho gia dinh : ");
+	scanf("%d", &n);
+	nhap(a,n);
+	tongtiendien(a,n);
+	printf("\n Cac ho gia dinh sau khi nhap la : \n");
+	xuat(a,n);
+	gdhomaxsodien(a,n);
+	gdhominsodien(a,n);
+	char ten[30];
+	nhaptenhogd(a,n,ten);
+	timtenhogd(a,n,ten);
+	tongtien(a,n);
+	getch();
+}
+
