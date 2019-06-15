@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <conio.h>
+#include <malloc.h>
+
+void nhapN(int &n, int max, int min);
+void capphat(int *&a, int n);
+void nhapmang(int *a, int n);
+void xuatmang(int *a, int n);
+int vtptmin(int *a,int n);
+int soluongx(int *a, int n, int x);
+void xoaptx(int *a, int &n, int x);
+
+void nhapN(int &n, int max, int min){
+	do{
+		scanf("%d", &n);
+		if(n>max||n<=min) printf("Ban nhap n khong hop le, nhap lai: ");
+	}while(n>max||n<=min);
+}
+
+void capphat(int *&a, int n){
+	a = (int*)malloc(n*sizeof(int));
+	if(a == NULL){
+		printf("\nKhong cap phat duoc.\n");
+	}
+	else{
+		printf("\nCap phat thanh cong!!!\n");
+		return;
+	}
+}
+
+void nhapmang(int *a, int n){
+	for(int i=0;i<n;i++){
+		printf("Nhap a[%d] = ",i);
+		scanf("%d", a+i);
+	}
+}
+
+void xuatmang(int *a, int n){
+	for(int i=0;i<n;i++){
+		printf("%5d", *(a+i));
+	}
+}
+
+int vtptmin(int *a,int n){
+	int min = *(a+0);
+	int mini = 0;
+	for(int i=0;i<n;i++){
+		if(*(a+i)<min){
+			min = *(a+i);
+			mini = i;
+		}
+	}
+	return mini;
+}
+
+int soluongx(int *a, int n, int x){
+	int count =0;
+	for(int i=0;i<n;i++){
+		if(*(a+i) == x){
+			count ++;
+		}
+	}	
+	return count;
+}
+
+void xoaptx(int *a, int &n, int x){
+	for(int i=0;i<n;i++){
+		if(*(a+i)==x){
+			for(int j=i;j<n;j++){
+				*(a+j) = *(a+j+1);
+			}
+			n--;
+			i--;
+		}
+	}
+
+}
+
+int main(){
+	int *a = NULL;
+	int n;
+	printf("Nhap n: ");
+	nhapN(n,1000,0);
+	capphat(a,n);
+	nhapmang(a,n);
+	printf("\nMang sau khi nhap la: \n");
+	xuatmang(a,n);
+	printf("\nVi tri phan tu nho nhat trong mang la: %d", vtptmin(a,n));
+	int x;
+	printf("\nNhap x: ");
+	scanf("%d",&x);
+	printf("So luong phan tu x trong mang la: %d", soluongx(a,n,x)); 
+	printf("\nMang sau khi xoa la: ");
+	xoaptx(a,n,x);
+	xuatmang(a,n);
+	free(a);
+	return 0;
+}
