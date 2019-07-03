@@ -1,0 +1,19 @@
+#include <iostream>
+#include <string.h>
+#include <math.h>
+using namespace std;
+
+int main(){
+	char a[100000];
+	gets(a);
+	int x = 0;
+	int tong =0;
+	for(int i=strlen(a)-1;i>=0;i--){
+		if(a[i] == '1'){
+			tong+=pow(2,x);
+		}
+		x++;
+	}
+	cout << tong;
+	return 0;
+}
