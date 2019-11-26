@@ -1,0 +1,190 @@
+create database quanlysinhvienv2
+go
+use quanlysinhvienv2
+go
+create table lop(
+malop nvarchar(50) not null,
+tenlop nvarchar(50) null,
+siso int null,
+primary key (malop))
+go
+create table sinhvien(
+masv nvarchar(50) not null,
+hoten nvarchar(50) null,
+ngsinh datetime null,
+gioitinh nvarchar(50) null,
+quequan nvarchar(50) null,
+malop nvarchar(50) null,
+diemtb float null,
+xeploai nvarchar(50) null,
+primary key (masv),
+foreign key (malop) references lop(malop))
+go
+create table monhoc(
+mamh nvarchar(50) not null,
+tenmh nvarchar(50) null,
+sotc int null,
+batbuoc nvarchar(50) null,
+primary key (mamh))
+go
+create table ketqua(
+masv nvarchar(50) not null,
+mamh nvarchar(50) not null,
+hocky nvarchar(50) not null,
+diemthi float null,
+primary key (masv,mamh,hocky),
+foreign key (masv) references sinhvien(masv),
+foreign key (mamh) references monhoc(mamh))
+go
+-----------------------------------------------------------------------
+--- CAU C ---
+declare capnhatdiemtb cursor for select masv from sinhvien
+open capnhatdiemtb
+	declare @masv nvarchar(50)
+	fetch next from capnhatdiemtb into @masv
+	while @@fetch_status = 0
+	begin
+		update sinhvien
+		set diemtb = (select avg(diemthi)
+		from ketqua
+		where ketqua.masv = @masv)
+		where sinhvien.masv = @masv
+		fetch next from capnhatdiemtb into @masv
+	end;
+close capnhatdiemtb
+deallocate capnhatdiemtb
+---- CAU D -----
+go
+create default macdinh_siso_diemtb_diemthi
+as '0'
+go
+sp_bindefault macdinh_siso_diemtb_diemthi, 'sinhvien.diemtb'
+go
+sp_bindefault macdinh_siso_diemtb_diemthi, 'lop.siso'
+go
+sp_bindefault macdinh_siso_diemtb_diemthi, 'ketqua.diemthi'
+
+-- CAU E -------
+go
+create default macdinh_tenlop_hoten_quaquan
+as 'Chua xac dinh'
+go
+sp_bindefault macdinh_tenlop_hoten_quaquan, 'sinhvien.hoten'
+go
+sp_bindefault macdinh_tenlop_hoten_quaquan, 'sinhvien.quequan'
+go
+sp_bindefault macdinh_tenlop_hoten_quaquan, 'lop.tenlop'
+go
+
+
+-- CAU F --------
+
+create rule ngaysinh
+as @ngaysinh < getdate()
+go
+sp_bindrule 'ngaysinh', 'sinhvien.ngsinh'
+go
+
+-- CAU G --------
+
+create rule gioitinh
+as (@gioitinh = 'Nam' or @gioitinh = 'Nu')
+go
+sp_bindrule 'gioitinh', 'sinhvien.gioitinh'
+go
+
+---- CAU H -------
+create rule sotc
+as (@sotc <= 12 and @sotc >= 2)
+go
+sp_bindrule 'sotc', 'monhoc.sotc'
+go
+
+
+--- CAU I ----
+
+create rule diemthi
+as (@diemthi <= 10 and @diemthi >=0)
+go
+sp_bindrule 'diemthi', 'ketqua.diemthi'
+go
+
+--- CAU J ----
+
+declare @DIEMTB float
+set @DIEMTB = (select diemtb
+from sinhvien
+where masv = 'SV01')
+
+if @diemtb < 5 print ('yeu')
+else if @diemtb < 7 print ('trung binh')
+else if @diemtb < 8 print ('kha')
+else if @diemtb <=10 print ('gioi')
+else print ('Khong xac dinh')
+
+--- CAU G -------
+declare @tuoi datetime
+set @tuoi = datediff(year, (select ngsinh from sinhvien where sinhvien.masv = 'SV001'),getdate())
+if  @tuoi > 30
+begin
+	select hoten, @tuoi as tuoi, diemtb
+	from sinhvien
+	where sinhvien.masv = 'SV001'
+end;
+else print('Sinh vien nay duoi 30 tuoi')
+go
+---- CAU H ----
+if exists (select diemtb
+from sinhvien
+where diemtb > 5) 
+begin
+	select count(masv) as tongso
+	from sinhvien
+	where sinhvien.diemtb > 5
+end;
+else print ('Khong co ai tren trung binh')
+go
+--- CAU I ----
+create table Canhbao_sinhvien(
+masv nvarchar(50) not null,
+hoten nvarchar(50) null,
+ngsinh datetime null,
+gioitinh nvarchar(50) null,
+quequan nvarchar(50) null,
+malop nvarchar(50) null,
+diemtb float null,
+xeploai nvarchar(50) null,
+primary key (masv),
+foreign key (malop) references lop(malop))
+go
+declare canhbaosinhvien cursor for select masv, hoten, ngsinh,gioitinh,quequan,malop, diemtb, xeploai from sinhvien
+open canhbaosinhvien
+	declare @masv nvarchar(50)
+	declare @hoten nvarchar(50)
+	declare @ngsinh datetime
+	declare @gioitinh nvarchar(50)
+	declare @quequan nvarchar(50)
+	declare @malop nvarchar(50)
+	declare @diemtb float
+	declare @xeploai nvarchar(50)
+
+	fetch next from canhbaosinhvien into @masv ,@hoten, @ngsinh,@gioitinh,@quequan,@malop, @diemtb, @xeploai
+	while @@fetch_status = 0
+	begin
+	if @diemtb < 4
+	begin
+		insert into Canhbao_sinhvien
+		values ( @masv ,@hoten, @ngsinh,@gioitinh,@quequan,@malop, @diemtb, @xeploai)
+	end;
+	fetch next from canhbaosinhvien into @masv ,@hoten, @ngsinh,@gioitinh,@quequan,@malop, @diemtb, @xeploai
+	end;
+close canhbaosinhvien
+deallocate canhbaosinhvien
+go
+
+
+
+
+
+
+
