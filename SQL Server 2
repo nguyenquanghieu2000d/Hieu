@@ -1,0 +1,175 @@
+-----------------------------------------------------------------------------------------
+/*
+lop (malop,tenlop,siso)
+sinhvien (masv,hoten,ngsinh,gioitinh,quequan,malop, diemtb,xeploai)
+monhoc (mamh,tenmh,sotc,batbuoc)
+ketqua (masv,mamh,hocky,diemthi)
+*/
+
+--- CAU C
+create proc capnhatsiso
+as
+begin
+	declare capnhatsiso cursor for select malop from lop
+	open capnhatsiso
+		declare @malop nvarchar(50)
+		fetch next from capnhatsiso into @malop
+		while @@FETCH_STATUS = 0
+		begin
+			update lop
+			set siso  = (select count(malop)
+			from sinhvien
+			where malop = @malop)
+			where malop = @malop
+			fetch next from capnhatsiso into @malop
+		end;
+	close capnhatsiso
+	deallocate capnhatsiso
+end;
+go
+exec capNhatSiSo
+go
+-- CAU D
+create proc congDiem @masv nvarchar(50)
+as
+begin
+	update sinhvien
+	set diemtb = diemtb + 1
+	from sinhvien
+	where masv = @masv
+end;
+go
+exec congDiem 'SV01'
+go
+-- CAU E
+create proc inSinhVien @masv nvarchar(50)
+as
+begin
+	select hoten,diemtb
+	from sinhvien
+	where masv = @masv
+end;
+go
+exec inSinhVien 'SV01'
+go
+-- CAU F
+create proc tinhdiemtb
+as
+begin
+	declare tinhdiemtb cursor for select masv from sinhvien
+	open tinhdiemtb
+		declare @masv nvarchar(50)
+		fetch next from tinhdiemtb into @masv
+		while @@FETCH_STATUS = 0
+		begin
+			update sinhvien
+			set diemtb = (select sum(diemthi * monhoc.sotc) / sum(sotc)
+			from ketqua, monhoc
+			where ketqua.mamh = monhoc.mamh
+			and ketqua.masv = @masv)
+			where sinhvien.masv = @masv
+			fetch next from tinhdiemtb into @masv
+		end;
+	close tinhdiemtb
+	deallocate tinhdiemtb
+end;
+go
+exec tinhdiemtb
+go
+--- CAU G
+create trigger kiemTraDiemThi on ketqua
+for insert, update
+as
+begin
+	if (select diemthi from inserted) > 10 
+	begin
+		print ('Nhap gia tri khong duoc qua 10')
+		rollback tran
+	end;
+
+	if (select diemthi from inserted) < 0 
+	begin
+		print ('Nhap gia tri khong duoc duoi 0')
+		rollback tran
+	end;
+end;
+go
+-- CAU H
+create trigger capnhatsiso_1 on sinhvien 
+for insert, update, delete
+as
+begin
+	exec capNhatSiSo
+end;
+go
+-- CAU I
+create trigger tinhdiemTB_1 on ketqua
+for insert, update ,delete
+as
+begin
+	exec tinhdiemtb
+end;
+go
+-- CAU J drop trigger dangKyToiDa
+create trigger dangKyToiDa on ketqua
+for insert
+as
+begin
+	if (select top 1 count(ketqua.masv)
+	from ketqua, inserted
+	where ketqua.masv = inserted.masv
+	group by ketqua.hocky
+	order by count(ketqua.masv) desc) > 3 
+	begin
+		print ('KHONG DUOC DANG KY LON HON 3 MON TRONG 1 HOC KY NHE')
+		rollback tran
+	end;
+end;
+go
+-- CAU K drop trigger dangKyToiDa_TC
+create trigger dangKyToiDa_TC on ketqua
+for insert
+as
+begin
+	if (select top 1 sum (sotc)
+	from monhoc, ketqua,inserted
+	where monhoc.mamh = ketqua.mamh 
+	and ketqua.masv = inserted.masv
+	and monhoc.batbuoc = 'co'
+	and ketqua.masv = 'SV01'
+	group by ketqua.masv, ketqua.hocky
+	order by sum (sotc) desc) > 10 
+	begin
+		print ('KHONG DUOC DANG KY LON HON 10 TC MON BAT BUOC TRONG 1 HOC KY NHE')
+		rollback tran
+	end;
+end;
+go
+-- CAU L
+create trigger xeploai on ketqua
+for insert, update
+as
+begin
+	declare xeploai cursor for select masv,diemtb from sinhvien
+	open xeploai
+		declare @masv nvarchar(50)
+		declare @diemtb float
+		fetch next from xeploai into @masv, @diemtb
+		while @@FETCH_STATUS = 0
+		begin
+			declare @loai nvarchar(50)
+			if @diemtb < 5 set @loai = 'yeu'
+			else if @diemtb < 7 set @loai = 'trung binh'
+			else if @diemtb < 8 set @loai = 'kha'
+			else if @diemtb <= 10 set @loai = 'gioi'
+			else set @loai = 'khong xac dinh'
+			update sinhvien
+			set xeploai = @loai
+			from sinhvien
+			where masv = @masv
+			fetch next from xeploai into @masv, @diemtb
+		end;
+
+	close xeploai
+	deallocate xeploai
+end;
