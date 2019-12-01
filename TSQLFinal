@@ -1,0 +1,1125 @@
+--------------------------------------------------------------------------------------
+--------------------------- CREATE DATABASE AND TABLE --------------------------------
+--------------------------------------------------------------------------------------
+create database quanLyNhaHangv19
+go
+use quanLyNhaHangv19
+go
+create table ChucVu(
+MaChucVu nvarchar(10) not null,
+TenChucVu nvarchar(50) null,
+ChucNangChoPhep nvarchar(50) null,
+primary key (MaChucVu))
+go
+create table NhanVien(
+MaNhanVien nvarchar(10) not null,
+Username nvarchar(20) null,
+password nvarchar(20) null,
+TenNhanVien nvarchar(100) null,
+GioiTinh nvarchar(10) null,
+DiaChi nvarchar(100) null,
+SoDienThoai nvarchar(20) null,
+NgaySinh datetime null,
+Tuoi int null,
+MaChucVu nvarchar(10) null,
+primary key (MaNhanVien),
+foreign key (MaChucVu) references ChucVu(MaChucVu))
+go
+create table BanAn(
+MaBan nvarchar(10) not null,
+TinhTrang nvarchar(10) null,
+primary key (MaBan))
+go
+create table KhachHang(
+MaKhachHang nvarchar(10) not null,
+TenKhachHang nvarchar(100) null,
+GioiTinh nvarchar(10) null,
+DiaChi nvarchar(100) null,
+SoDienThoai nvarchar(20) null,
+NgaySinh datetime null,
+Tuoi int null,
+primary key(MaKhachHang))
+go
+create table PhieuOrder(
+MaPhieuOrder nvarchar(10) not null,
+MaNhanVien nvarchar(10) null,
+MaKhachHang nvarchar(10) null,
+TinhTrangThanhToan nvarchar(50) null,
+ngayLapPhieu datetime null,
+primary key (MaPhieuOrder),
+foreign key (MaNhanVien) references NhanVien(MaNhanVien),
+foreign key (MaKhachHang) references KhachHang(MaKhachHang))
+go
+create table ChiTietOrder_Ban(
+MaPhieuOrder nvarchar(10) not null,
+MaBan nvarchar(10) not null,
+primary key (MaPhieuOrder,MaBan),
+foreign key (MaPhieuOrder) references PhieuOrder(MaPhieuOrder),
+foreign key (MaBan) references BanAn(MaBan))
+go
+create table MonAn(
+MaMonAn nvarchar(10) not null,
+TenMonAn nvarchar(100) null,
+DonViTinh nvarchar(100) null,
+TinhTrang nvarchar(100) null,
+primary key (MaMonAn))
+go
+create table DonGiaMonAn(
+ID int not null,
+MaMonAn nvarchar(10) not null,
+MaNhanVien nvarchar(10) not null,
+DonGia float null,
+ngayCapNhat datetime null,
+primary key (ID),
+foreign key (MaMonAn) references MonAn(MaMonAn),
+foreign key (MaNhanVien) references NhanVien(MaNhanVien))
+go
+create table ChiTietOrder(
+MaPhieuOrder nvarchar(10) not null,
+MaMonAn nvarchar(10) not null,
+SoLuong float null,
+DonGia float null,
+ThanhTien float null,
+primary key (MaPhieuOrder,MaMonAn),
+foreign key (MaPhieuOrder) references PhieuOrder(MaPhieuOrder),
+foreign key (MaMonAn) references MonAn(MaMonAn))
+go
+create table HoaDon(
+MaHoaDon nvarchar(10) not null,
+MaPhieuOrder nvarchar(10) null,
+MaKhachHang nvarchar(10) null,
+MaNhanVien nvarchar(10) null,
+NgayThanhToan datetime null,
+TongTien float null,
+GiamGia float null,
+ThanhTien float null,
+primary key (MaHoaDon),
+foreign key (MaPhieuOrder) references PhieuOrder(MaPhieuOrder),
+foreign key (MaKhachHang) references KhachHang(MaKhachHang),
+foreign key (MaNhanVien) references NhanVien(MaNhanVien))
+go
+create table NhaCungCap(
+MaNhaCungCap nvarchar(10) not null,
+TenNhaCungCap nvarchar(100) null,
+DiaChi nvarchar(100) null,
+SoDienThoai nvarchar(20) null,
+Email nvarchar(100) null,
+primary key (MaNhaCungCap))
+go
+create table KhoNguyenLieu(
+MaNguyenLieu nvarchar(10) not null,
+TenNguyenLieu nvarchar(100) null,
+SoLuong int null,
+DonViTinh nvarchar(100) null,
+TinhTrang nvarchar(100) null,
+primary key (MaNguyenLieu))
+go
+create table NhapHang(
+MaPhieuNhap nvarchar(10) not null,
+MaNhanVien nvarchar(10) null,
+MaNhaCungCap nvarchar(10) null,
+NgayNhap datetime null,
+ThanhTien float null,
+primary key (MaPhieuNhap),
+foreign key (MaNhanVien) references NhanVien(MaNhanVien),
+foreign key (MaNhaCungCap) references NhaCungCap(MaNhaCungCap))
+go 
+create table ChiTietNhapHang(
+MaPhieuNhap nvarchar(10) not null,
+MaNguyenLieu nvarchar(10) not null,
+SoLuong int null,
+GiaNhap float null,
+ThanhTien float null,
+primary key (MaNguyenLieu,MaPhieuNhap),
+foreign key (MaNguyenLieu) references KhoNguyenLieu(MaNguyenLieu),
+foreign key (MaPhieuNhap) references NhapHang(MaPhieuNhap))
+go
+create table CongThucMonAn(
+MaMonAn nvarchar(10) not null,
+MaNguyenLieu nvarchar(10) not null,
+SoLuong int null,
+GiaNhap float null,
+ThanhTien float null,
+primary key (MaMonAn,MaNguyenLieu),
+foreign key (MaMonAn) references MonAn(MaMonAn),
+foreign key (MaNguyenLieu) references KhoNguyenLieu(MaNguyenLieu))
+go
+/*
+insert into NhanVien (MaNhanVien, Username,password,HoTen,GioiTinh,DiaChi,SoDienThoai,NgaySinh)
+values ('NV01', 'Nguyen Quang Hieu', 
+*/
+/*
+create proc capNhatTuoi
+as
+declare cnt cursor for select MaNhanVien from NhanVien
+open cnt
+	declare @MaNhanVien nvarchar(10)
+	fetch next from cnt into @MaNhanVien
+	while @@FETCH_STATUS = 0
+	begin
+		update NhanVien
+		set Tuoi = (select DATEDIFF(year, NhanVien.NgaySinh, getdate())
+		from NhanVien
+		where MaNhanVien = @MaNhanVien)
+		where MaNhanVien = @MaNhanVien
+		fetch next from cnt into @MaNhanVien
+	end;
+close cnt
+deallocate cnt drop proc capNhatTuoi
+go
+exec capNhatTuoi drop proc capNhatTuoi
+go*/
+go
+
+
+
+-----------------------------------------------
+------------- TRUY VAN -----------------------
+---------------------------------------------
+--1
+select * from NhanVien
+--2
+if exists (select * from NhanVien
+where DiaChi = 'Ha Noi')
+begin
+	select * from NhanVien
+	where DiaChi = 'Ha Noi'
+end;
+else print ('Khong co nhan vien nao o Ha Noi')
+--3 
+go
+select *
+from NhaCungCap
+where MaNhaCungCap not in(
+select NhaCungCap.MaNhaCungCap
+from NhaCungCap,NhapHang
+where NhaCungCap.MaNhaCungCap =  NhapHang.MaNhaCungCap)
+-- 4
+go
+select distinct NhaCungCap.*
+from NhaCungCap,NhapHang, ChiTietNhapHang, KhoNguyenLieu
+where NhaCungCap.MaNhaCungCap =  NhapHang.MaNhaCungCap
+and ChiTietNhapHang.MaPhieuNhap = NhapHang.MaPhieuNhap
+and ChiTietNhapHang.MaNguyenLieu = KhoNguyenLieu.MaNguyenLieu
+and KhoNguyenLieu.TenNguyenLieu = 'Thit lon'
+go
+-- 5
+select HoaDon.*
+from HoaDon
+where ThanhTien >=all(
+select ThanhTien
+from HoaDon)
+go
+-- 6
+select sum(HoaDon.ThanhTien) - (
+select sum(NhapHang.ThanhTien)
+from NhapHang 
+where month(NhapHang.NgayNhap) = '10'
+and year(NhapHang.NgayNhap) = '2019') as 'Doanh thu thang 10'
+from HoaDon 
+where month(HoaDon.NgayThanhToan) = '10'
+and year(HoaDon.NgayThanhToan) = '2019'
+-- 7
+select distinct KhoNguyenLieu.TenNguyenLieu
+from KhoNguyenLieu, ChiTietNhapHang, NhapHang
+where KhoNguyenLieu.MaNguyenLieu = ChiTietNhapHang.MaNguyenLieu
+and NhapHang.MaPhieuNhap = ChiTietNhapHang.MaPhieuNhap
+and month(NhapHang.NgayNhap) = '10'
+and year(NhapHang.NgayNhap) = '2019'
+-- 8
+select NhaCungCap.MaNhaCungCap, TenNhaCungCap, DiaChi, SoDienThoai,Email, 
+sum (NhapHang.ThanhTien) as 'So tien giao dich'
+from NhaCungCap, NhapHang
+where NhaCungCap.MaNhaCungCap = NhapHang.MaNhaCungCap
+group by NhaCungCap.MaNhaCungCap, TenNhaCungCap, DiaChi, SoDienThoai,Email
+having sum (NhapHang.ThanhTien) >=all(
+select sum (NhapHang.ThanhTien) as 'So tien giao dich'
+from NhaCungCap, NhapHang
+where NhaCungCap.MaNhaCungCap = NhapHang.MaNhaCungCap
+group by NhaCungCap.MaNhaCungCap, TenNhaCungCap, DiaChi, SoDienThoai,Email)
+-- 9
+select distinct NhanVien.*
+from NhanVien, HoaDon
+where NhanVien.MaNhanVien = HoaDon.MaNhanVien
+and month(HoaDon.NgayThanhToan) = '11'
+and year(HoaDon.NgayThanhToan) = '2019'
+-- 10
+select MaMonAn, TenMonAn
+from MonAn
+where TinhTrang = 'Co the phuc vu'
+go
+
+--11
+create default Mac_Dinh_La_0
+as '0'
+go
+exec sp_bindefault Mac_Dinh_La_0, 'HoaDon.TongTien'
+exec sp_bindefault Mac_Dinh_La_0, 'HoaDon.ThanhTien'
+exec sp_bindefault Mac_Dinh_La_0, 'HoaDon.GiamGia'
+go
+-- 12
+create default Mac_Dinh_La_ChuaXacDinh
+as 'Chua Xac Dinh'
+go
+exec sp_bindefault Mac_Dinh_La_ChuaXacDinh, 'NhanVien.TenNhanVien'
+exec sp_bindefault Mac_Dinh_La_ChuaXacDinh, 'NhanVien.DiaChi'
+go
+-- 13
+create default Mac_Dinh_La_Trong
+as 'Trong'
+go
+exec sp_bindefault Mac_Dinh_La_Trong, 'BanAn.TinhTrang'
+
+go
+-- 14
+create default Mac_Dinh_La_Khong
+as 'Khong'
+go
+exec sp_bindefault Mac_Dinh_La_Khong, 'MonAn.TinhTrang'
+go
+-- 15
+create default Mac_Dinh_La_Chua_Thanh_Toan
+as 'Chua Thanh Toan'
+go
+exec sp_bindefault Mac_Dinh_La_Chua_Thanh_Toan, 'PhieuOrder.TinhTrangThanhToan'
+go
+-- 16
+create rule NgaySinh
+as @NgaySinh < getdate()
+go
+sp_bindrule 'NgaySinh','NhanVien.NgaySinh'
+go
+-- 17
+create rule GioiTinh
+as (@GioiTinh = 'Nam' or @GioiTinh = 'Nu' or @GioiTinh = 'Khac')
+go
+sp_bindrule 'GioiTinh','NhanVien.GioiTinh'
+
+
+--------------------------------------------------------------------------------
+------------------------- STORE PROCEDUCE --------------------------------------
+-------------------------------------------------------------------------------
+
+go
+--1
+create proc setTuoi
+as
+begin
+	update NhanVien
+	set Tuoi = datediff(year,NhanVien.NgaySinh,getdate())
+end;
+go
+exec setTuoi
+go
+--2
+create proc TimNhanVien @manv nvarchar(10)
+as
+begin
+	if exists (select NhanVien.*
+	from NhanVien
+	where MaNhanVien = @manv)
+	begin
+		select NhanVien.*
+		from NhanVien
+		where MaNhanVien = @manv
+	end;
+	else 
+	begin
+		print ('Khong co nhan vien trong nha hang ')
+	end;
+end;
+go
+exec TimNhanVien 'NV01' -- Giả sử tìm nhân viên có mã 'NV01'
+
+go
+
+-- 3
+
+create proc TimKhachHang @tenkh nvarchar(100)
+as
+begin
+	if exists (select KhachHang.*
+	from KhachHang
+	where TenKhachHang = @tenkh)
+	begin
+		select KhachHang.*
+		from KhachHang
+		where TenKhachHang = @tenkh
+	end;
+	else 
+	begin
+		print ('Khong co khach hang can tim')
+	end;
+end;
+go
+exec TimKhachHang 'Nguyen Quang Hieu'-- Giả sử tìm khách có tên là 'Nguyen Quang Hieu'
+-- 4
+go
+
+create proc HienThiChiTietOrder @maorder nvarchar(10)
+as
+begin
+	if exists (select MaPhieuOrder 
+	from PhieuOrder
+	where MaPhieuOrder = @maorder)
+	begin
+		select ChiTietOrder.*
+		from ChiTietOrder
+		where @maorder = MaPhieuOrder
+
+		select MaBan
+		from ChiTietOrder_Ban
+		where MaPhieuOrder = @maorder
+	end;
+	else print ('Khong co phieu order')
+end;
+go
+exec HienThiChiTietOrder 'OD01' -- Giả sử tìm với phiếu Order là 'OD01'
+go
+-- 5
+
+create proc HienThiDoanhThuTheoThang @thang int, @nam int
+as
+begin
+	select sum(HoaDon.ThanhTien) - (
+	select sum(NhapHang.ThanhTien)
+	from NhapHang 
+	where month(NhapHang.NgayNhap) = @thang
+	and year(NhapHang.NgayNhap) = @nam) as 'Doanh thu'
+	from HoaDon 
+	where month(HoaDon.NgayThanhToan) = @thang
+	and year(HoaDon.NgayThanhToan) = @nam
+end;
+go
+exec HienThiDoanhThuTheoThang  '11','2019'
+
+-- 6
+go
+create proc HienThiDoanhThuTheoNam @nam int
+as
+begin
+	select sum(HoaDon.ThanhTien) - (
+	select sum(NhapHang.ThanhTien)
+	from NhapHang 
+	where year(NhapHang.NgayNhap) = @nam) as 'Doanh thu'
+	from HoaDon 
+	where year(HoaDon.NgayThanhToan) = @nam
+end;
+go
+exec HienThiDoanhThuTheoNam '2019'
+go
+
+-- 7
+create proc HienThiNhanVienThamGiaBanHang @ngay int, @thang int, @nam int
+as
+begin
+	if exists (select NhanVien.*
+	from NhanVien,HoaDon
+	where NhanVien.MaNhanVien = HoaDon.MaNhanVien
+	and day(HoaDon.NgayThanhToan) = @ngay
+	and month(HoaDon.NgayThanhToan) = @thang
+	and year(HoaDon.NgayThanhToan) = @nam)
+	begin
+		select distinct NhanVien.*
+	from NhanVien,HoaDon
+	where NhanVien.MaNhanVien = HoaDon.MaNhanVien
+	and day(HoaDon.NgayThanhToan) = @ngay
+	and month(HoaDon.NgayThanhToan) = @thang
+	and year(HoaDon.NgayThanhToan) = @nam
+	end;
+	else print('Khong co nhan vien ban hang trong ngay')
+end;
+go
+exec HienThiNhanVienThamGiaBanHang '30', '11', '2019'
+-- Giả sử hiển thị thông tin nhân viên bán hàng ngày 25 tháng 11 năm 2019
+go
+
+-- 8
+create proc HienThiMonAnBanChay @thang int, @nam int
+as
+begin
+select MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang, sum(ChiTietOrder.SoLuong) as 'So Luong'
+	from MonAn, ChiTietOrder, HoaDon
+	where MonAn.MaMonAn = ChiTietOrder.MaMonAn
+	and ChiTietOrder.MaPhieuOrder = HoaDon.MaPhieuOrder	
+	and month(HoaDon.NgayThanhToan) = @thang
+	and year(HoaDon.NgayThanhToan) = @nam
+	group by MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang
+	having sum(ChiTietOrder.SoLuong) >= all(
+	select sum(ChiTietOrder.SoLuong) as 'So Luong'
+	from MonAn, ChiTietOrder, HoaDon
+	where MonAn.MaMonAn = ChiTietOrder.MaMonAn
+	and ChiTietOrder.MaPhieuOrder = HoaDon.MaPhieuOrder
+	and month(HoaDon.NgayThanhToan) = @thang
+	and year(HoaDon.NgayThanhToan) = @nam
+	group by MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang)
+end;
+go
+exec HienThiMonAnBanChay '11', '2019'
+	-- Giả sử tìm món ăn bán chạy nhất tháng 11 năm 2019
+
+go
+-- 9
+create proc HienThiMonAnBanChay_Nam @nam int
+as
+begin
+	select MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang, sum(ChiTietOrder.SoLuong) as 'So Luong'
+	from MonAn, ChiTietOrder, HoaDon
+	where MonAn.MaMonAn = ChiTietOrder.MaMonAn
+	and ChiTietOrder.MaPhieuOrder = HoaDon.MaPhieuOrder	
+	and year(HoaDon.NgayThanhToan) = @nam
+	group by MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang
+	having sum(ChiTietOrder.SoLuong) >= all(
+	select sum(ChiTietOrder.SoLuong) as 'So Luong'
+	from MonAn, ChiTietOrder, HoaDon
+	where MonAn.MaMonAn = ChiTietOrder.MaMonAn
+	and ChiTietOrder.MaPhieuOrder = HoaDon.MaPhieuOrder
+	and year(HoaDon.NgayThanhToan) = @nam
+	group by MonAn.MaMonAn,TenMonAn,DonViTinh,TinhTrang)
+end;
+go
+exec HienThiMonAnBanChay_Nam '2019'
+-- Giả sử tìm món ăn bán chạy nhất năm 2019
+go
+
+-- 10
+
+create proc HienThiNhapHang @thang int, @nam int
+as
+begin
+	if exists (select NhapHang.*
+	from NhapHang
+	where month(NhapHang.NgayNhap) = @thang
+	and year(NhapHang.NgayNhap) = @nam)
+	begin
+		select NhapHang.*
+		from NhapHang
+		where month(NhapHang.NgayNhap) = @thang
+		and year(NhapHang.NgayNhap) = @nam
+	end;
+	else print('Khong co hang nhap trong thang')
+end;
+go
+exec HienThiNhapHang '11', '2019'
+-- Giả sử hiển thị tất cả các phiếu nhập hàng trong tháng 10 năm 2019
+go
+
+-- 11
+
+create proc HienThiNhapHang_Nam @nam int
+as
+begin
+	if exists (select NhapHang.*
+	from NhapHang
+	where year(NhapHang.NgayNhap) = @nam)
+	begin
+		select NhapHang.*
+		from NhapHang
+		where year(NhapHang.NgayNhap) = @nam
+	end;
+	else print('Khong co hang nhap trong nam')
+end;
+go
+exec HienThiNhapHang_Nam '2019'
+-- Giả sử hiển thị tất cả các phiếu nhập hàng trong năm 2019
+
+-- 12
+go
+create proc HienThiThucPhamTonKho 
+as
+begin
+	select *
+	from KhoNguyenLieu
+	where SoLuong >0
+end;
+go
+exec HienThiThucPhamTonKho
+
+------------------------------------------------------------------------
+--------------------------- TRIGGER    --------------------------------
+------------------------------------------------------------------------
+
+go
+--3.3.1. Trigger cập nhật tuổi của nhân viên drop trigger SetTuoiNhanVien
+create trigger SetTuoiNhanVien on NhanVien
+for insert, update
+as
+begin
+	update NhanVien
+	set Tuoi = (select datediff(year, NhanVien.NgaySinh, getdate())
+	from inserted
+	where inserted.MaNhanVien = NhanVien.MaNhanVien)
+	from NhanVien, inserted
+	where inserted.MaNhanVien = NhanVien.MaNhanVien
+end;
+go 
+---------------- XAC DINH TU DONG NGAY LAP PHIEU ---------------------------------
+create trigger setNgayLapPhieu on PhieuOrder
+for insert
+as
+begin
+	update PhieuOrder
+	set ngayLapPhieu = getdate()
+	from PhieuOrder
+	join inserted on inserted.MaPhieuOrder = PhieuOrder.MaPhieuOrder
+end; 
+go 
+--3.3.2. Trigger cập nhật tuổi của khách hàng drop trigger setTuoi_KH SetTuoiKhachHang
+create trigger SetTuoiKhachHang on KhachHang 
+for insert, update
+as
+begin
+	update KhachHang
+	set Tuoi = (select DATEDIFF(year, KhachHang.NgaySinh, getdate())
+	from inserted
+	where inserted.MaKhachHang = KhachHang.MaKhachHang)
+	from KhachHang, inserted
+	where inserted.MaKhachHang = KhachHang.MaKhachHang
+end;
+go
+
+--3.3.3. Trigger xác định ngày nhập của nhập hàng. drop trigger setNgayLapPhieuNhap
+go
+create trigger SetNgayLapPhieuNhap on NhapHang
+for insert
+as
+begin
+	update NhapHang
+	set NgayNhap = getdate()
+	from NhapHang, inserted
+	where inserted.MaPhieuNhap = NhapHang.MaPhieuNhap
+end;
+go
+-- 3.3.4. Trigger xác định ngày tạo phiếu của phiếu order.
+create trigger SetNgayTaoOrder on PhieuOrder
+for insert
+as
+begin
+	update PhieuOrder
+	set NgayLapPhieu = getdate()
+	from PhieuOrder, inserted
+	where inserted.MaPhieuOrder = PhieuOrder.MaPhieuOrder
+end;
+go
+-- 3.3.5. Trigger xác định ngày thanh toán cho hóa đơn drop trigger setNgayLapHoaDon
+create trigger SetNgayLapHoaDon on HoaDon
+for insert
+as
+begin
+	update HoaDon
+	set NgayThanhToan = getdate()
+	from HoaDon,inserted
+	where inserted.MaHoaDon = HoaDon.MaHoaDon
+end;
+go 
+-- 3.3.6. Trigger cập nhật thành tiền cho chi tiết hóa đơn drop trigger CapNhatThanhTienCTHD
+
+create trigger CapNhatThanhTienCTHD on ChiTietOrder 
+for insert,update
+as
+begin
+	update ChiTietOrder
+	set ThanhTien = inserted.SoLuong * inserted.DonGia
+	from ChiTietOrder,inserted
+	where inserted.MaPhieuOrder = ChiTietOrder.MaPhieuOrder
+	and inserted.MaMonAn = ChiTietOrder.MaMonAn
+end;
+
+go
+
+-- 3.3.7. Trigger cập nhật thành tiền cho hóa đơn drop trigger CapNhatThanhTienHoaDon
+
+create trigger CapNhatThanhTienHoaDon on HoaDon
+after insert
+as
+begin
+	update HoaDon
+	set TongTien = (select sum(ChiTietOrder.ThanhTien)
+	from ChiTietOrder, inserted
+	where ChiTietOrder.MaPhieuOrder = inserted.MaPhieuOrder)
+	from inserted
+	where inserted.MaPhieuOrder = HoaDon.MaPhieuOrder
+end;
+go
+
+--- 3.3.8. Trigger cập nhật thành tiền cho chi tiết phiếu nhập
+
+create trigger CapNhatThanhTienCTPN on ChiTietNhapHang
+for insert,update
+as
+begin
+	update ChiTietNhapHang
+	set ThanhTien = inserted.SoLuong * inserted.GiaNhap
+	from ChiTietNhapHang,inserted
+	where inserted.MaPhieuNhap = ChiTietNhapHang.MaPhieuNhap 
+	and inserted.MaNguyenLieu = ChiTietNhapHang.MaNguyenLieu
+end;
+
+-- 3.3.9. Trigger cập nhật thành tiền cho phiếu nhập
+go
+create trigger CapNhatThanhTienNhapHang on ChiTietNhapHang
+after insert, update
+as
+begin
+	update NhapHang
+	set ThanhTien = (select sum(ChiTietNhapHang.ThanhTien)
+	from ChiTietNhapHang, inserted
+	where inserted.MaPhieuNhap = ChiTietNhapHang.MaPhieuNhap)
+	from inserted
+	where inserted.MaPhieuNhap = NhapHang.MaPhieuNhap
+end;
+go
+
+create trigger CapNhatThanhTienNhapHang_forDelete on ChiTietNhapHang
+for delete
+as
+begin
+	update NhapHang
+	set NhapHang.ThanhTien = ( select sum(ChiTietNhapHang.ThanhTien)
+	from ChiTietNhapHang, deleted
+	where ChiTietNhapHang.MaPhieuNhap = deleted.MaPhieuNhap)
+	from deleted
+	where NhapHang.MaPhieuNhap = deleted.MaPhieuNhap
+end;
+go
+
+
+select *
+from CongThucMonAn,MonAn,KhoNguyenLieu,ChiTietOrder
+where CongThucMonAn.MaMonAn = MonAn.MaMonAn
+and KhoNguyenLieu.MaNguyenLieu = CongThucMonAn.MaNguyenLieu
+and ChiTietOrder.MaMonAn = MonAn.MaMonAn
+
+
+go
+-- 3.3.10. Trigger tự động cập nhật kho nguyên liệu khi thêm, sửa, xóa chi tiết order
+----- TRIGGER THÊM ----------
+ 
+create trigger CapNhatKhoNguyenLieu_Order_Them on ChiTietOrder
+for insert
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong - CongThucMonAn.SoLuong * inserted.SoLuong
+	from CongThucMonAn, MonAn, KhoNguyenLieu, inserted
+	where CongThucMonAn.MaMonAn = MonAn.MaMonAn
+	and KhoNguyenLieu.MaNguyenLieu = CongThucMonAn.MaNguyenLieu
+	and inserted.MaMonAn = MonAn.MaMonAn 
+end;
+go
+
+----- TRIGGER SỬA -----------
+
+create trigger CapNhatKhoNguyenLieu_Order_Sua on ChiTietOrder
+for update 
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong - CongThucMonAn.SoLuong * (inserted.SoLuong - deleted.SoLuong )
+	from CongThucMonAn, MonAn,KhoNguyenLieu, inserted, deleted
+	where CongThucMonAn.MaMonAn = MonAn.MaMonAn
+	and KhoNguyenLieu.MaNguyenLieu = CongThucMonAn.MaNguyenLieu
+	and inserted.MaMonAn = MonAn.MaMonAn 
+	and deleted.MaPhieuOrder = inserted.MaPhieuOrder
+	and deleted.MaMonAn = inserted.MaMonAn
+end;
+go
+
+-------- TRIGGER XÓA -----------
+
+create trigger CapNhatKhoNguyenLieu_Order_Xoa on ChiTietOrder
+for delete
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong + (CongThucMonAn.SoLuong * deleted.SoLuong)
+	from CongThucMonAn, MonAn,KhoNguyenLieu, deleted
+	where CongThucMonAn.MaMonAn = MonAn.MaMonAn
+	and KhoNguyenLieu.MaNguyenLieu = CongThucMonAn.MaNguyenLieu
+	and deleted.MaMonAn = MonAn.MaMonAn 
+end;
+go
+
+-- 3.3.11. Trigger không cho phép order khi chưa đủ hàng bán 
+go
+create trigger KhongChoPhepOrder on ChiTietOrder
+for insert,update
+as
+begin
+	if exists (select KhoNguyenLieu.TinhTrang
+	from CongThucMonAn, MonAn,KhoNguyenLieu, inserted
+	where CongThucMonAn.MaMonAn = MonAn.MaMonAn
+	and KhoNguyenLieu.MaNguyenLieu = CongThucMonAn.MaNguyenLieu
+	and inserted.MaMonAn = MonAn.MaMonAn
+	and KhoNguyenLieu.TinhTrang = 'Am Hang')
+	begin
+	print ('Khong the them mon an')
+	rollback tran
+	end
+end
+
+go
+-- 3.3.12. Trigger cập nhật tình trạng kho nguyên liệu
+
+create trigger CapNhatTinhTrangKho on ChiTietOrder
+for insert,update,delete
+as
+begin
+	update KhoNguyenLieu
+	set TinhTrang = 'Con Hang'
+	from KhoNguyenLieu
+	where SoLuong > 0
+	
+	update KhoNguyenLieu
+	set TinhTrang = 'Het Hang' 
+	from KhoNguyenLieu
+	where (SoLuong = 0 or SoLuong = NULL)
+
+	update KhoNguyenLieu
+	set TinhTrang = 'Am Hang'
+	from KhoNguyenLieu
+	where (SoLuong < 0 or SoLuong = NULL)
+end;
+go
+-- 3.3.13. Trigger cập nhật trình trạng phục vụ của món ăn
+create trigger CapNhatTinhTrangMonAn on ChiTietOrder
+for insert, update
+as
+begin
+	if exists (
+	select * 
+	from MonAn,CongThucMonAn,KhoNguyenLieu,inserted
+	where MonAn.MaMonAn = CongThucMonAn.MaMonAn
+	and CongThucMonAn.MaNguyenLieu = KhoNguyenLieu.MaNguyenLieu
+	and KhoNguyenLieu.SoLuong = '0'
+	and MonAn.MaMonAn = inserted.MaMonAn)
+	begin
+		update MonAn
+		set TinhTrang = 'Khong the phuc vu'
+		from MonAn,inserted
+		where MonAn.MaMonAn = inserted.MaMonAn
+	end
+	else
+	begin
+		update MonAn
+		set TinhTrang = 'Co the phuc vu'
+		from MonAn,inserted
+		where MonAn.MaMonAn = inserted.MaMonAn
+	end
+end;
+go
+create trigger CapNhatTinhTrangMonAn_Xoa on ChiTietOrder
+for delete
+as
+begin
+	begin
+		update MonAn
+		set TinhTrang = 'Co the phuc vu'
+		from MonAn,deleted
+		where MonAn.MaMonAn = deleted.MaMonAn
+	end
+end;
+
+
+
+go
+-- 3.3.14. Trigger tự động cập nhật đơn giá mới nhất cho món ăn
+
+create trigger CapNhatDonGia on ChiTietOrder
+for insert
+as
+begin
+	update ChiTietOrder
+	set DonGia = ( select top 1 DonGiaMonAn.DonGia
+	from DonGiaMonAn, MonAn, inserted
+	where DonGiaMonAn.MaMonAn = MonAn.MaMonAn
+	and inserted.MaMonAn = MonAn.MaMonAn
+	order by NgayCapNhat desc)
+	from inserted
+	where ChiTietOrder.MaMonAn = inserted.MaMonAn
+	and inserted.MaPhieuOrder = ChiTietOrder.MaPhieuOrder
+end
+
+-- 3.3.15. Trigger tự động thêm ngày cập nhật mới nhất cho đơn giá món ăn
+
+go
+create trigger SetDonGiaMonAn on DonGiaMonAn
+for insert
+as 
+begin
+	update DonGiaMonAn
+	set NgayCapNhat = getdate()
+	from DonGiaMonAn,inserted
+	where inserted.ID = DonGiaMonAn.ID
+end;
+/*
+--- 3.3.16. Trigger không cho phép sửa đơn giá trong đơn giá món ăn
+
+create trigger KhongChoPhepSua on DonGiaMonAn
+for update
+as
+begin
+	if (select deleted.DonGia from deleted) != (select inserted.DonGia from inserted)
+	begin
+		print ('Khong duoc sua don gia')
+		rollback tran
+	end
+end;
+*/
+-- 3.3.16. Trigger cập nhật tình trạng bàn là 'Co Khach' khi tạo mới phiếu order và thêm sửa hoặc xóa thông tin vào chi tiết đặt bàn bàn ăn
+go
+create trigger CapNhatTrangThaiBan on ChiTietOrder_Ban
+for insert, update
+as
+begin
+	update BanAn
+	set TinhTrang = 'Co Khach'
+	from BanAn, inserted
+	where BanAn.MaBan = inserted.MaBan
+end;
+go
+create trigger CapNhatTrangThaiBan_Xoa on ChiTietOrder_Ban
+for delete
+as
+begin
+	update BanAn
+	set TinhTrang = 'Trong' 
+	from BanAn,deleted
+	where BanAn.MaBan = deleted.MaBan
+end;
+
+-- 3.3.17. Trigger cập nhật tình trạng bàn là 'Trong' khi thực hiện thanh toán cho phiếu order
+go
+create trigger CapNhatTrangThaiBan_ThanhToan on HoaDon
+for insert
+as
+begin
+	update BanAn
+	set TinhTrang = 'Trong'
+	from BanAn, inserted, PhieuOrder, ChiTietOrder_Ban
+	where BanAn.MaBan = ChiTietOrder_Ban.MaBan
+	and PhieuOrder.MaPhieuOrder = ChiTietOrder_Ban.MaPhieuOrder
+	and PhieuOrder.MaPhieuOrder = inserted.MaPhieuOrder 
+end;
+go
+-- 3.3.18. Trigger đặt lại tình trạng thanh toán của phiếu order là đã thanh toán khi phiếu order đã được thanh toán
+create trigger CapNhatTinhTrangThanhToan on HoaDon
+for insert
+as
+begin
+	update PhieuOrder
+	set TinhTrangThanhToan = 'Da Thanh Toan'
+	from PhieuOrder, inserted
+	where PhieuOrder.MaPhieuOrder = inserted.MaPhieuOrder
+end;
+
+/*
+	3.3.19 Trigger thực hiện việc giảm giá đối với khách hàng: 
+	Cụ thể:
+	- Hóa đơn từ 100000 VND trở lên giảm 5%
+	- Hóa đơn từ 500000 VND trở lên giảm 10%
+	- Hóa đơn từ 1000000 VND trở lên giảm 15%*/
+go
+create trigger GiamGia on HoaDon
+for insert
+as
+begin 
+	update HoaDon
+	set GiamGia = '5'
+	from HoaDon
+	where TongTien >='100000'
+	
+	update HoaDon
+	set GiamGia = '10'
+	from HoaDon
+	where TongTien >'500000'
+
+	update HoaDon
+	set GiamGia = '15'
+	from HoaDon
+	where TongTien > '1000000'
+
+	update HoaDon
+	set GiamGia = '0'
+	from HoaDon
+	where TongTien < '100000'
+
+	update HoaDon
+	set ThanhTien = TongTien - TongTien * (GiamGia / 100)
+end
+
+-- 3.3.20. Trigger thực hiện việc thêm hàng vào kho mỗi khi thực hiên việc nhập hàng
+go
+create trigger CapNhatHang_Them on ChiTietNhapHang
+for insert
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong + (select inserted.SoLuong from inserted)
+	from inserted
+	where KhoNguyenLieu.MaNguyenLieu = inserted.MaNguyenLieu
+end;
+go
+
+create trigger CapNhatHang_Sua on ChiTietNhapHang
+for update
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong + 
+	(select inserted.SoLuong from inserted) - 
+	(select deleted.SoLuong from deleted)
+	from inserted
+	where KhoNguyenLieu.MaNguyenLieu = inserted.MaNguyenLieu
+end;
+go
+
+create trigger CapNhatHang_Xoa on ChiTietNhapHang
+for delete
+as
+begin
+	update KhoNguyenLieu
+	set SoLuong = KhoNguyenLieu.SoLuong - 
+	(select deleted.SoLuong from deleted)
+	from deleted
+	where KhoNguyenLieu.MaNguyenLieu = deleted.MaNguyenLieu
+end;
+/*
+go
+insert into NhanVien (MaNhanVien, Username, password, HoTen, GioiTinh,DiaChi,SoDienThoai,NgaySinh)
+values ('NV00', 'hieu01','quanghieu','Nguyen Quang Hieu', 'Nam', 'Ha Noi', '0913324234', '10/2/2000'),
+('NV01', 'hieu01','quanghieu','Nguyen Quang Hieu', 'Nam', 'Ha Noi', '0913364555', '10/2/2001'),
+('NV02', 'hieu01','quanghieu','Nguyen Quang Ha', 'Nam', 'Ha Noi', '0913234234', '10/2/1980'),
+('NV03', 'hieu01','quanghieu','Nguyen Quang Huy', 'Nam', 'Ha Noi', '0913322343', '11/02/1990'),
+('NV04', 'hieu01','quanghieu','Nguyen Quang Huan', 'Nam', 'Ha Noi', '0913324231', '10/3/1960'),
+('NV05', 'hieu01','quanghieu','Nguyen Quang Hoang', 'Nam', 'Ha Noi', '0913324234', '10/4/1980'),
+('NV06', 'hieu01','quanghieu','Nguyen Quang Hoan', 'Nam', 'Ha Noi', '0913324234', '10/7/1991')
+go
+insert into KhachHang(MaKhachHang, TenKhachHang, GioiTinh,DiaChi, SoDienThoai,NgaySinh)
+values ('KH00','Nguyen Quang Hieu', 'Nam', 'Ha Noi', '0913324234', '10/2/2000'),
+('KH01', 'Nguyen Quang Hieu', 'Nam', 'Ha Noi', '0913364555', '10/2/2001'),
+('KH02','Nguyen Quang Ha', 'Nam', 'Ha Noi', '0913234234', '10/2/1980'),
+('KH03','Nguyen Quang Huy', 'Nam', 'Ha Noi', '0913322343', '11/02/1990'),
+('KH04', 'Nguyen Quang Huan', 'Nam', 'Ha Noi', '0913324231', '10/3/1960'),
+('KH05', 'Nguyen Quang Hoang', 'Nam', 'Ha Noi', '0913324234', '10/4/1980'),
+('KH06', 'Nguyen Quang Hoan', 'Nam', 'Ha Noi', '0913324234', '10/7/1991')
+go
+insert into PhieuOrder(MaPhieuOrder,MaNhanVien,MaKhachHang)
+values ('OD01','NV01', 'KH02'),
+('OD02','NV02', 'KH02'),
+('OD03','NV03', 'KH01'),
+('OD04','NV02', 'KH03'),
+('OD05','NV01', 'KH04'),
+('OD06','NV03', 'KH01'),
+('OD07','NV02', 'KH05'),
+('OD08','NV01', 'KH02')
+go
+insert into MonAn(MaMonAn,TenMonAn,DonViTinh)
+values ('MA01','Trung','Qua'),
+('MA02','Trung','Qua'),
+('MA03','Trung','Qua'),
+('MA04','Trung','Qua'),
+('MA05','Trung','Qua'),
+('MA06','Trung','Qua'),
+('MA07','Trung','Qua')
+go 
+insert into DonGiaMonAn(ID,MaMonAn,MaNhanVien,DonGia)
+values ('1000000','MA01','NV01','9000'),
+('1000001','MA02','NV01','5000'),
+('1000002','MA03','NV01','6000'),
+('1000003','MA04','NV01','93000'),
+('1000004','MA05','NV01','90500'),
+('1000005','MA01','NV01','90060'),
+('1000006','MA02','NV01','90003'),
+('1000007','MA03','NV01','9040'),
+('1000008','MA01','NV01','9080'),
+('1000009','MA02','NV01','9060')
+go
+
+insert into ChiTietOrder(MaPhieuOrder,MaMonAn,SoLuong)
+values ('OD01','MA01','3'),
+('OD01','MA02','3'),
+('OD01','MA03','4'),
+('OD01','MA04','5'),
+('OD02','MA01','2'),
+('OD03','MA01','1'),
+('OD01','MA07','66'),
+('OD04','MA01','7'),
+('OD01','MA05','8')
+go
+insert into HoaDon (MaHoaDon,MaPhieuOrder,MaNhanVien,MaKhachHang)
+values ('HD01','OD01','NV01', 'KH02'),
+('HD02','OD02','NV02', 'KH02'),
+('HD03','OD03','NV03', 'KH01'),
+('HD04','OD04','NV02', 'KH03'),
+('HD05','OD05','NV01', 'KH04'),
+('HD06','OD06','NV03', 'KH01'),
+('HD07','OD07','NV02', 'KH05'),
+('HD08','OD08','NV01', 'KH02')
+go
+insert into ChiTietHoaDon(MaHoaDon,MaMonAn,SoLuong)
+values ('HD01','MA01','3'),
+('HD01','MA02','3'),
+('HD01','MA03','4'),
+('HD01','MA04','5'),
+('HD02','MA01','2'),
+('HD03','MA01','1'),
+('HD01','MA07','66'),
+('HD04','MA01','7'),
+('HD01','MA05','8')
+go
+insert into NhaCungCap
+values ('NCC01','Cong ty thuc pham sach','Ha Nam','09233445453','thucphamsach.com'),
+('NCC02','Cong ty thuc pham sach1','Ha Nam','09233445453','thucphamsach1.com'),
+('NCC03','Cong ty thuc pham sach2','Ha Nam','09233445453','thucphamsach2.com'),
+('NCC04','Cong ty thuc pham sach3','Ha Nam','09233445453','thucphamsach3.com'),
+('NCC05','Cong ty thuc pham sach4','Ha Nam','09233445453','thucphamsach4.com'),
+('NCC06','Cong ty thuc pham sach5','Ha Nam','09233445453','thucphamsach5.com'),
+('NCC07','Cong ty thuc pham sach6','Ha Nam','09233445453','thucphamsach6.com')
+go
+insert into KhoNguyenLieu
+values ('NL01','Thit','kg'),
+('NL02','Thit1','g'),
+('NL03','Thit2','yen'),
+('NL04','Thit3','tan'),
+('NL05','Thit4','lit'),
+('NL06','Thit5','cm3'),
+('NL07','Thit6','lang'),
+('NL08','Thit7','ta'),
+('NL09','Thit8','kg')
+go
+insert into NhapHang (MaPhieuNhap,MaNhanVien,MaNhaCungCap)
+values ('PN01', 'NV01', 'NCC01'),
+('PN02', 'NV01', 'NCC02'),
+('PN03', 'NV02', 'NCC03'),
+('PN04', 'NV01', 'NCC04'),
+('PN05', 'NV04', 'NCC01'),
+('PN06', 'NV03', 'NCC02'),
+('PN07', 'NV02', 'NCC05'),
+('PN08', 'NV05', 'NCC04'),
+('PN09', 'NV04', 'NCC03'),
+('PN010', 'NV02', 'NCC03'),
+('PN011', 'NV01', 'NCC01')
+go
+insert into chiTietKhoNguyenLieu (MaPhieuNhap,MaNguyenLieu, SoLuong,GiaNhap)
+values ('PN01','NL01', '3','9000'),
+('PN01','NL02', '3','90300'),
+('PN01','NL03', '3','90040'),
+('PN01','NL04', '3','902300'),
+('PN01','NL06', '3','9043500'),
+('PN02','NL01', '3','9023400'),
+('PN03','NL01', '3','9234000'),
+('PN04','NL02', '3','901200'),
+('PN01','NL05', '3','904200')
+go
+insert into ChiTietNhapHang (MaPhieuNhap,MaNguyenLieu, SoLuong,GiaNhap)
+values ('PN01','NL01', '3','9000'),
+('PN01','NL02', '3','90300'),
+('PN01','NL03', '3','90040'),
+('PN01','NL04', '3','902300'),
+('PN01','NL06', '3','9043500'),
+('PN02','NL01', '3','9023400'),
+('PN03','NL01', '3','9234000'),
+('PN04','NL02', '3','901200'),
+('PN01','NL05', '3','904200')
+go*/
